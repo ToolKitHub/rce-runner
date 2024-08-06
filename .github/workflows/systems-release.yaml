@@ -4,6 +4,8 @@ on:
   release:
     types: [created]
 
+  workflow_dispatch:
+
 env:
   APP_NAME: rce-runner
   ARCHIVE_NAME: rce-runner_linux-x64.tar.gz
