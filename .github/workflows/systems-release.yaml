@@ -29,8 +29,8 @@ jobs:
 
       - name: Prepare upload url
         run: |
-          upload_url="$(jq -r '.release.upload_url' "$GITHUB_EVENT_PATH" | sed -e "s/{?name,label}$/?name=${ARCHIVE_NAME}/")"
-          echo "UPLOAD_URL=$upload_url" >> $GITHUB_ENV
+          UPLOAD_URL="$(jq -r '.release.upload_url' "$GITHUB_EVENT_PATH" | sed -e "s/{?name,label}$/?name=${ARCHIVE_NAME}/")"
+          echo "UPLOAD_URL=$UPLOAD_URL" >> $GITHUB_ENV
 
       - name: Build application
         run: |
