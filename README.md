@@ -1,11 +1,11 @@
-# RCE Runner
+# rce-runner
 
-## Overview
+> [!IMPORTANT]
+> The release binary is used by [rce-images](https://github.com/ToolKitHub/rce-images) to run code.
 
 This is a command line application that reads code as a
 json payload from stdin – compiles and runs the code – and writes
 the result as json to stdout.
-This is used by [rce-images](https://github.com/ToolKitHub/rce-images) to run code.
 
 ## Prerequisites
 
