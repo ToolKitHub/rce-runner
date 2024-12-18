@@ -161,7 +161,7 @@ rec {
       };
       "rce-runner" = rec {
         crateName = "rce-runner";
-        version = "1.2.2";
+        version = "1.2.3";
         edition = "2021";
         crateBin = [
           {
