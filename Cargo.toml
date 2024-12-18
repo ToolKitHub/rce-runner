@@ -1,6 +1,6 @@
 [package]
 name = "rce-runner"
-version = "1.2.2"
+version = "1.2.3"
 authors = ["Success Kingsley <hello@xosnrdev.tech>"]
 description = """
 A command line application that reads code as a
