@@ -2,9 +2,14 @@
 name = "rce-runner"
 version = "1.2.2"
 authors = ["Success Kingsley <hello@xosnrdev.tech>"]
+description = """
+A command line application that reads code as a
+json payload from stdin – compiles and runs the code – and writes
+the result as json to stdout.
+"""
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+repository = "https://github.com/ToolKitHub/rce-runner"
 
 [dependencies]
 serde = { version = "1.0.116", features = ["derive"] }
