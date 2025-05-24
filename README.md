@@ -96,7 +96,8 @@ RCE Runner supports 40+ programming languages:
 | Zig | .zig |
 
 
-> **Tip:** Can't find your preferred programming language? [Open an issue](https://github.com/ToolKitHub/rce-runner/issues/new) or send a PR to request support.
+> [!TIP] 
+> Can't find your preferred programming language? [Open an issue](https://github.com/ToolKitHub/rce-runner/issues/new) or send a PR to request support.
 
 ## License
 
