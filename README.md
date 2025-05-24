@@ -1,4 +1,4 @@
-# RCE Runner: Run Code in Multiple Languages
+# RCE Runner
 
 ## What is this?
 
@@ -95,8 +95,10 @@ RCE Runner supports 40+ programming languages:
 | TypeScript | .ts |
 | Zig | .zig |
 
-Can't find your preferred programming language? [Open an issue](https://github.com/ToolKitHub/rce-runner/issues/new) or send a PR.
 
+> [!TIP] 
+>
+> Can't find your preferred programming language? [Open an issue](https://github.com/ToolKitHub/rce-runner/issues/new) or send a PR to request support.
 
 ## License
 
