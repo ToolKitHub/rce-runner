@@ -11,6 +11,14 @@ RCE Runner is a command line tool that runs your code snippets in many different
 - You're creating a learning platform and need to execute student code
 - You're building tools for technical interviews or coding challenges
 
+## Installation
+
+Run this command to install RCE Runner:
+
+```sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/ToolKitHub/rce-runner/releases/download/v1.2.4/rce-runner-installer.sh | sh
+```
+
 ## Quick Start Guide
 
 ### What you'll need
@@ -102,4 +110,4 @@ RCE Runner supports 40+ programming languages:
 
 ## License
 
-See [LICENSE](LICENSE) file
+See [LICENSE](LICENSE)
