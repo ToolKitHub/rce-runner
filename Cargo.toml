@@ -1,6 +1,6 @@
 [package]
 name = "rce-runner"
-version = "1.2.3"
+version = "1.2.4"
 authors = ["ToolKitHub"]
 description = "A command line tool that runs your code snippets in many different programming languages"
 edition = "2024"
