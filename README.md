@@ -1,158 +1,103 @@
-# rce-runner
+# RCE Runner: Run Code in Multiple Languages
 
-> [!IMPORTANT]
-> The release binary is used by [rce-images](https://github.com/ToolKitHub/rce-images) to run code.
+## What is this?
 
-This is a command line application that reads code as a
-json payload from stdin – compiles and runs the code – and writes
-the result as json to stdout.
+RCE Runner is a command line tool that runs your code snippets in many different programming languages. You give it code, it runs the code, and gives you back the results.
 
-## Prerequisites
+## When would I use this?
 
-rce-runner requires that the compiler / interpreter for the languages
-you want to run is installed and is in PATH.
+- You're building a website where users can write and run code
+- You need to test code in many languages without installing all those languages
+- You're creating a learning platform and need to execute student code
+- You're building tools for technical interviews or coding challenges
 
-## Supported languages
+## Quick Start Guide
 
-- Assembly
-- Ats
-- Bash
-- C
-- Clojure
-- Cobol
-- CoffeeScript
-- Cpp
-- Crystal
-- Csharp
-- D
-- Elixir
-- Elm
-- Erlang
-- Fsharp
-- Go
-- Groovy
-- Haskell
-- Idris
-- Java
-- JavaScript
-- Julia
-- Kotlin
-- Lua
-- Mercury
-- Nim
-- Ocaml
-- Perl
-- Php
-- Python
-- Raku
-- Ruby
-- Rust
-- SaC
-- Scala
-- Swift
-- TypeScript
+### What you'll need
 
-## Input (stdin)
+- A system with the programming languages you want to run installed
+- Basic familiarity with JSON format
 
-The input is required to be a json object containing the properties `language`
-and `files`. `language` must be a lowecase string matching one of the supported
-languages. `files` must be an array with at least one object containing the
-properties `name` and `content`. `name` is the name of the file and can include
-forward slashes to create the file in a subdirectory relative to the base
-directory. All files are written into the same base directory under the OS's
-temp dir.
+### Basic Example
 
-In addition, one may optionally provide the `stdin` and `command` properties to
-provide stdin data to the running code and to run the code with a custom command.
-See examples below.
+Send this JSON as input:
 
-## Output (stdout)
-
-The output is a json object containing the properties `stdout`, `stderr` and
-`error`. `stdout` and `stderr` is captured from the output of the ran code.
-`error` is popuplated if there is a compiler / interpreter error.
-Note that the rce-runner will exit with a non-zero code if invalid input is
-given or if the files cannot be written to disk (permissions, disk space, etc).
-No json will be written to stdout in those cases. Otherwise the exit code is 0.
-
-## Examples
-
-### Simple example
-
-#### Input
-
-```javascript
+```json
 {
   "language": "python",
   "files": [
     {
       "name": "main.py",
-      "content": "print(42)"
+      "content": "print('Hello, world!')"
     }
   ]
 }
 ```
 
-##### Output
+You'll get this output:
 
-```javascript
+```json
 {
-  "stdout": "42\n",
+  "stdout": "Hello, world!\n",
   "stderr": "",
   "error": ""
 }
 ```
 
-### Read from stdin
+## Supported Languages
 
-##### Input
+RCE Runner supports 40+ programming languages:
 
-```javascript
-{
-  "language": "python",
-  "stdin": "42",
-  "files": [
-    {
-      "name": "main.py",
-      "content": "print(input('Number from stdin: '))"
-    }
-  ]
-}
-```
+| Language | File Extension |
+|----------|---------------|
+| Assembly | .asm |
+| Ats | .dats |
+| Bash | .sh |
+| C | .c |
+| Clisp | .lisp |
+| Clojure | .clj |
+| Cobol | .cob |
+| CoffeeScript | .coffee |
+| Cpp (C++) | .cpp |
+| Crystal | .cr |
+| Csharp (C#) | .cs |
+| D | .d |
+| Dart | .dart |
+| Elixir | .ex |
+| Elm | .elm |
+| Erlang | .erl |
+| Fsharp (F#) | .fs |
+| Go | .go |
+| Groovy | .groovy |
+| Guile | .scm |
+| Hare | .ha |
+| Haskell | .hs |
+| Idris | .idr |
+| Java | .java |
+| JavaScript | .js |
+| Julia | .jl |
+| Kotlin | .kt |
+| Lua | .lua |
+| Mercury | .m |
+| Nim | .nim |
+| Nix | .nix |
+| Ocaml | .ml |
+| Pascal | .pas |
+| Perl | .pl |
+| Php | .php |
+| Python | .py |
+| Raku | .raku |
+| Ruby | .rb |
+| Rust | .rs |
+| SaC | .c |
+| Scala | .scala |
+| Swift | .swift |
+| TypeScript | .ts |
+| Zig | .zig |
 
-##### Output
+Can't find your preferred programming language? [Open an issue](https://github.com/ToolKitHub/rce-runner/issues/new) or send a PR.
 
-```javascript
-{
-  "stdout": "Number from stdin: 42\n",
-  "stderr": "",
-  "error": ""
-}
-```
 
-### Custom run command
+## License
 
-##### Input
-
-```javascript
-{
-  "language": "bash",
-  "command": "bash main.sh 42",
-  "files": [
-    {
-      "name": "main.sh",
-      "content": "echo Number from arg: $1"
-    }
-  ]
-}
-```
-
-##### Output
-
-```javascript
-{
-  "stdout": "Number from arg: 42\n",
-  "stderr": "",
-  "error": ""
-}
-```
+See [LICENSE](LICENSE) file
