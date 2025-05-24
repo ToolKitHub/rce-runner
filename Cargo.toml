@@ -2,7 +2,7 @@
 name = "rce-runner"
 version = "1.2.3"
 authors = ["ToolKitHub"]
-description = "A simple tool that runs your code snippets in many different programming languages"
+description = "A command line tool that runs your code snippets in many different programming languages"
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/ToolKitHub/rce-runner"
