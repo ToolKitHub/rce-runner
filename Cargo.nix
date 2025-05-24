@@ -162,7 +162,7 @@ rec {
       "rce-runner" = rec {
         crateName = "rce-runner";
         version = "1.2.3";
-        edition = "2021";
+        edition = "2024";
         crateBin = [
           {
             name = "rce-runner";
@@ -172,7 +172,7 @@ rec {
         ];
         src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
         authors = [
-          "Success Kingsley <hello@xosnrdev.tech>"
+          "ToolKitHub"
         ];
         dependencies = [
           {
