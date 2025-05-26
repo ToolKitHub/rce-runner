@@ -1,8 +1,8 @@
-# RCE Runner
+# rce-runner
 
 ## What is this?
 
-RCE Runner is a command line tool that runs your code snippets in many different programming languages. You give it code, it runs the code, and gives you back the results.
+**rce-runner** is a command line tool that runs your code snippets in many different programming languages. You give it code, it runs the code, and gives you back the results.
 
 ## When would I use this?
 
@@ -13,7 +13,7 @@ RCE Runner is a command line tool that runs your code snippets in many different
 
 ## Installation
 
-Run this command to install RCE Runner:
+Run this command to install rce-runner:
 
 ```sh
 curl --proto '=https' --tlsv1.2 -LsSf https://github.com/ToolKitHub/rce-runner/releases/download/v1.2.4/rce-runner-installer.sh | sh
@@ -54,7 +54,7 @@ You'll get this output:
 
 ## Supported Languages
 
-RCE Runner supports 40+ programming languages:
+rce-runner supports 40+ programming languages:
 
 | Language | File Extension |
 |----------|---------------|
@@ -110,4 +110,4 @@ RCE Runner supports 40+ programming languages:
 
 ## License
 
-See [LICENSE](LICENSE)
+See [License](LICENSE)
