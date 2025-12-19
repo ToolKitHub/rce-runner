@@ -10,6 +10,7 @@ impl<T> NonEmptyVec<T> {
     }
 }
 
+#[must_use]
 pub fn from_vec<T>(mut vec: Vec<T>) -> Option<NonEmptyVec<T>> {
     if vec.is_empty() {
         None

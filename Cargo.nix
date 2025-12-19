@@ -171,8 +171,9 @@ rec {
           }
         ];
         src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
+        libName = "rce_runner";
         authors = [
-          "ToolKitHub"
+          "ToolKitHub <xosnrdev@gmail.com>"
         ];
         dependencies = [
           {
