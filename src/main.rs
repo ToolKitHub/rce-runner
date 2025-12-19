@@ -1,5 +1,3 @@
-mod rce_runner;
-
 use std::env;
 use std::fmt;
 use std::fs;
@@ -9,39 +7,35 @@ use std::path::Path;
 use std::process;
 use std::time;
 
-use crate::rce_runner::cmd;
-use crate::rce_runner::language;
-use crate::rce_runner::non_empty_vec;
+use rce_runner::cmd;
+use rce_runner::language;
+use rce_runner::non_empty_vec;
 
 fn main() {
     let _ = start().map_err(handle_error);
 }
 
 fn handle_error(error: Error) {
-    match error {
-        // Print RunResult if it's a compile error
-        Error::Compile(err) => {
-            let run_result = to_error_result(err);
-            let _ = serde_json::to_writer(io::stdout(), &run_result)
-                .map_err(Error::SerializeRunResult)
-                .map_err(handle_error);
-        }
-
-        _ => {
-            eprintln!("{}", error);
-            process::exit(1);
-        }
+    // Print RunResult if it's a compile error
+    if let Error::Compile(err) = error {
+        let run_result = to_error_result(err);
+        let _ = serde_json::to_writer(io::stdout(), &run_result)
+            .map_err(Error::SerializeRunResult)
+            .map_err(handle_error);
+    } else {
+        eprintln!("{error}");
+        process::exit(1);
     }
 }
 
 fn start() -> Result<(), Error> {
     let stdin = io::stdin();
     let stdout = io::stdout();
-    let args = env::args().collect();
+    let args: Vec<_> = env::args().collect();
 
     let run_request = parse_request(stdin)?;
 
-    let work_path = match work_path_from_args(args) {
+    let work_path = match work_path_from_args(&args) {
         Some(path) => path,
 
         None => default_work_path()?,
@@ -67,7 +61,7 @@ fn start() -> Result<(), Error> {
     let run_result = match run_request.command {
         Some(command) if !command.is_empty() => run(&work_path, &command, run_request.stdin),
 
-        Some(_) | None => run_default(&work_path, run_request.language, files, run_request.stdin)?,
+        Some(_) | None => run_default(&work_path, &run_request.language, files, run_request.stdin)?,
     };
 
     serde_json::to_writer(stdout, &run_result).map_err(Error::SerializeRunResult)
@@ -81,11 +75,7 @@ struct RunResult {
 }
 
 fn to_success_result(output: cmd::SuccessOutput) -> RunResult {
-    RunResult {
-        stdout: output.stdout,
-        stderr: output.stderr,
-        error: "".to_string(),
-    }
+    RunResult { stdout: output.stdout, stderr: output.stderr, error: String::new() }
 }
 
 fn to_error_result(error: cmd::Error) -> RunResult {
@@ -95,18 +85,14 @@ fn to_error_result(error: cmd::Error) -> RunResult {
             stderr: output.stderr,
             error: match output.exit_code {
                 Some(exit_code) => {
-                    format!("Exit code: {}", exit_code)
+                    format!("Exit code: {exit_code}")
                 }
 
-                None => "".to_string(),
+                None => String::new(),
             },
         },
 
-        _ => RunResult {
-            stdout: "".to_string(),
-            stderr: "".to_string(),
-            error: format!("{}", error),
-        },
+        _ => RunResult { stdout: String::new(), stderr: String::new(), error: format!("{error}") },
     }
 }
 
@@ -134,18 +120,15 @@ fn file_from_request_file(base_path: &path::Path, file: RequestFile) -> Result<F
     err_if_false(!file.name.is_empty(), Error::EmptyFileName())?;
     err_if_false(!file.content.is_empty(), Error::EmptyFileContent())?;
 
-    Ok(File {
-        path: base_path.join(file.name),
-        content: file.content,
-    })
+    Ok(File { path: base_path.join(file.name), content: file.content })
 }
 
 fn parse_request<R: io::Read>(reader: R) -> Result<RunRequest, Error> {
     serde_json::from_reader(reader).map_err(Error::ParseRequest)
 }
 
-fn work_path_from_args(arguments: Vec<String>) -> Option<path::PathBuf> {
-    let args = arguments.iter().map(|s| s.as_ref()).collect::<Vec<&str>>();
+fn work_path_from_args(arguments: &[String]) -> Option<path::PathBuf> {
+    let args = arguments.iter().map(std::convert::AsRef::as_ref).collect::<Vec<&str>>();
 
     match &args[1..] {
         ["--path", path] => Some(path::PathBuf::from(path)),
@@ -155,9 +138,8 @@ fn work_path_from_args(arguments: Vec<String>) -> Option<path::PathBuf> {
 }
 
 fn default_work_path() -> Result<path::PathBuf, Error> {
-    let duration = time::SystemTime::now()
-        .duration_since(time::UNIX_EPOCH)
-        .map_err(Error::GetTimestamp)?;
+    let duration =
+        time::SystemTime::now().duration_since(time::UNIX_EPOCH).map_err(Error::GetTimestamp)?;
 
     let name = format!("rce-{}", duration.as_secs());
 
@@ -176,17 +158,13 @@ fn unpack_bootstrap_file(work_path: &path::Path, bootstrap_file: &path::Path) ->
 }
 
 fn write_file(file: &File) -> Result<(), Error> {
-    let parent_dir = file
-        .path
-        .parent()
-        .ok_or_else(|| Error::GetParentDir(file.path.to_path_buf()))?;
+    let parent_dir = file.path.parent().ok_or_else(|| Error::GetParentDir(file.path.clone()))?;
 
     // Create parent directories
     fs::create_dir_all(parent_dir)
         .map_err(|err| Error::CreateParentDir(parent_dir.to_path_buf(), err))?;
 
-    fs::write(&file.path, &file.content)
-        .map_err(|err| Error::WriteFile(file.path.to_path_buf(), err))
+    fs::write(&file.path, &file.content).map_err(|err| Error::WriteFile(file.path.clone(), err))
 }
 
 fn compile(work_path: &path::Path, command: &str) -> Result<cmd::SuccessOutput, Error> {
@@ -200,12 +178,12 @@ fn compile(work_path: &path::Path, command: &str) -> Result<cmd::SuccessOutput, 
 
 fn run_default(
     work_path: &path::Path,
-    language: language::Language,
+    language: &language::Language,
     files: Vec<File>,
     stdin: Option<String>,
 ) -> Result<RunResult, Error> {
     let file_paths = get_relative_file_paths(work_path, files)?;
-    let run_instructions = language::run_instructions(&language, file_paths);
+    let run_instructions = language::run_instructions(language, file_paths);
 
     for command in &run_instructions.build_commands {
         compile(work_path, command)?;
@@ -236,10 +214,7 @@ fn get_relative_file_paths(
     let names = files
         .into_iter()
         .map(|file| {
-            let path = file
-                .path
-                .strip_prefix(work_path)
-                .map_err(Error::StripWorkPath)?;
+            let path = file.path.strip_prefix(work_path).map_err(Error::StripWorkPath)?;
 
             Ok(path.to_path_buf())
         })
@@ -267,7 +242,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Error::ParseRequest(err) => {
-                write!(f, "Failed to parse request json, {}", err)
+                write!(f, "Failed to parse request json, {err}")
             }
 
             Error::NoFiles() => {
@@ -275,7 +250,7 @@ impl fmt::Display for Error {
             }
 
             Error::StripWorkPath(err) => {
-                write!(f, "Failed to strip work path of file. {}", err)
+                write!(f, "Failed to strip work path of file. {err}")
             }
 
             Error::EmptyFileName() => {
@@ -287,15 +262,11 @@ impl fmt::Display for Error {
             }
 
             Error::GetTimestamp(err) => {
-                write!(f, "Failed to get timestamp for work directory, {}", err)
+                write!(f, "Failed to get timestamp for work directory, {err}")
             }
 
             Error::GetParentDir(file_path) => {
-                write!(
-                    f,
-                    "Failed to get parent dir for file: '{}'",
-                    file_path.to_string_lossy()
-                )
+                write!(f, "Failed to get parent dir for file: '{}'", file_path.to_string_lossy())
             }
 
             Error::CreateParentDir(file_path, err) => {
@@ -308,24 +279,19 @@ impl fmt::Display for Error {
             }
 
             Error::WriteFile(file_path, err) => {
-                write!(
-                    f,
-                    "Failed to write file: '{}'. {}",
-                    file_path.to_string_lossy(),
-                    err
-                )
+                write!(f, "Failed to write file: '{}'. {}", file_path.to_string_lossy(), err)
             }
 
             Error::Bootstrap(err) => {
-                write!(f, "Failed to unpack bootstrap file: {}", err)
+                write!(f, "Failed to unpack bootstrap file: {err}")
             }
 
             Error::Compile(err) => {
-                write!(f, "Failed to compile: {}", err)
+                write!(f, "Failed to compile: {err}")
             }
 
             Error::SerializeRunResult(err) => {
-                write!(f, "Failed to serialize run result: {}", err)
+                write!(f, "Failed to serialize run result: {err}")
             }
         }
     }

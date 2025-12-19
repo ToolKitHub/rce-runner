@@ -26,11 +26,11 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Error::Execute(err) => {
-                write!(f, "Error while executing command. {}", err)
+                write!(f, "Error while executing command. {err}")
             }
 
             Error::Output(err) => {
-                write!(f, "Error in output from command. {}", err)
+                write!(f, "Error in output from command. {err}")
             }
         }
     }
@@ -48,7 +48,7 @@ impl fmt::Display for ExecuteError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             ExecuteError::Execute(err) => {
-                write!(f, "{}", err)
+                write!(f, "{err}")
             }
 
             ExecuteError::CaptureStdin() => {
@@ -56,11 +56,11 @@ impl fmt::Display for ExecuteError {
             }
 
             ExecuteError::WriteStdin(err) => {
-                write!(f, "Failed to write to stdin. {}", err)
+                write!(f, "Failed to write to stdin. {err}")
             }
 
             ExecuteError::WaitForChild(err) => {
-                write!(f, "Failed while waiting for child. {}", err)
+                write!(f, "Failed while waiting for child. {err}")
             }
         }
     }
@@ -107,15 +107,15 @@ impl fmt::Display for ErrorOutput {
         let mut messages = Vec::new();
 
         if let Some(code) = self.exit_code {
-            messages.push(format!("code: {}", code));
+            messages.push(format!("code: {code}"));
         }
 
         if !self.stdout.is_empty() {
-            messages.push(format!("stdout: {}", self.stdout))
+            messages.push(format!("stdout: {}", self.stdout));
         }
 
         if !self.stderr.is_empty() {
-            messages.push(format!("stderr: {}", self.stderr))
+            messages.push(format!("stderr: {}", self.stderr));
         }
 
         write!(f, "{}", messages.join(", "))
@@ -133,15 +133,15 @@ impl fmt::Display for OutputError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             OutputError::ExitFailure(err) => {
-                write!(f, "Exited with non-zero exit code. {}", err)
+                write!(f, "Exited with non-zero exit code. {err}")
             }
 
             OutputError::ReadStdout(err) => {
-                write!(f, "Failed to read stdout. {}", err)
+                write!(f, "Failed to read stdout. {err}")
             }
 
             OutputError::ReadStderr(err) => {
-                write!(f, "Failed to read stderr. {}", err)
+                write!(f, "Failed to read stderr. {err}")
             }
         }
     }
@@ -161,10 +161,6 @@ pub fn get_output(output: process::Output) -> Result<SuccessOutput, OutputError>
 
         let exit_code = output.status.code();
 
-        Err(OutputError::ExitFailure(ErrorOutput {
-            stdout,
-            stderr,
-            exit_code,
-        }))
+        Err(OutputError::ExitFailure(ErrorOutput { stdout, stderr, exit_code }))
     }
 }
